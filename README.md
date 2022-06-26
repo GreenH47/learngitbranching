@@ -57,11 +57,11 @@ git stash: 暂时移除工作目录下的修改内容
 git bisect: 通过二分查找搜索历史记录
 .gitignore: 指定 故意不追踪的文件
 ```
+ 
 
 
 
-
-## Git Branch
+# Git Branch
  Git 的分支也非常轻量。它们只是简单地指向某个提交纪录.这是因为即使创建再多的分支也不会造成储存或内存上的开销，并且按逻辑分解工作到不同的分支要比维护那些特别臃肿的分支简单多了
 
 + 建一个到名为 newImage 的分支。
@@ -83,15 +83,42 @@ git checkout <name>
 git checkout newImage; git commit  
 这就对了！我们的修改已经保存到新的分支里了。  
   <img src="./img/branch/2.png" width=20% height=20%>  
+  
 
-## Git Merge  
+
+# Git Merge  
 如何将两个分支合并到一起。新建一个分支，在其上开发某个新功能，开发完成后再合并回主线。  
 
 + 我们准备了两个分支，每个分支上各有一个独有的提交。这意味着没有一个分支包含了我们修改的所有内容。  
-咱们通过合并这两个分支来解决这个问题。我们要把 bugFix 合并到 main 里  
+咱们通过合并这两个分支来解决这个问题。  
 git merge bugFix  
   <img src="./img/merge/1.png" width=30% height=30%>  
-main 现在指向了一个拥有两个父节点的提交记录。假如从 main 开始沿着箭头向上看，  
-在到达起点的路上会经过所有的提交记录。这意味着 main 包含了对代码库的所有修改。  
+ 我们要把 bugFix 合 main 现在指向了一个拥有两个父节点的提交记录。假如从 main 开始沿着箭头向上看，  
+ 在到达起点的路上会经过所有的提交记录。这意味着 main 包含了对代码库的所有修改。  
   
-+ 
++ 把 main 分支合并到 bugFix：
+git checkout bugFix; git merge main  
+因为 main 继承自 bugFix，Git 什么都不用做，只是简单地把 bugFix 移动到 main 所指向的那个提交记录  
+  <img src="./img/merge/2.png" width=30% height=30%>   
+  
+
+
+# Git Rebase
+第二种合并分支的方法是 git rebase。Rebase 实际上就是取出一系列的提交记录，“复制”它们，然后在另外一个地方逐个的放下去。Rebase 的优势就是可以创造更线性的提交历史  
+
++ 把 bugFix 分支里的工作直接移到 main 分支上。使得两个分支的功能按顺序开发，但实际上它们是并行开发的。  
+git rebase main  
+现在 bugFix 分支上的工作在 main 的最顶端，同时我们也得到了一个更线性的提交序列  
+ <img src="./img/rebase/1.png" width=30% height=30%>  
+
++ 切换到了 main 上。把它 rebase 到 bugFix 分支上  
+git rebase bugFix  
+好了！由于 bugFix 继承自 main，所以 Git 只是简单的把 main 分支的引用向前移动了一下而已  
+ <img src="./img/rebase/2.png" width=30% height=30%>  
+  
+
+
+# 在 Git 提交树上移动  
+## HEAD  
+HEAD 是一个对当前检出记录的符号引用 —— 也就是指向你正在其基础上进行工作的提交记录  
+HEAD 总是指向当前分支上最近一次提交记录。大多数修改提交树的 Git 命令都是从改变 HEAD 的指向开始的。HEAD 通常情况下是指向分支名的（如 bugFix）。在你提交时，改变了 bugFix 的状态，这一变化通过 HEAD 变得可见。 
